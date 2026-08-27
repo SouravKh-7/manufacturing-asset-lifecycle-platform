@@ -1,0 +1,7 @@
+asset_id,asset_name,asset_type,plant_code,production_line,manufacturer,model,serial_number,installation_date,criticality,status
+AST-000001,CNC Turning Center 01,CNC Machine,JPR,LINE-01,Fanuc,TC-500,FNC-TC500-1001,2021-04-15,HIGH,ACTIVE
+AST-000002,Grinding Machine 01,Grinding Machine,JPR,LINE-01,Micromatic,GCU-350,MMC-GCU350-2041,2020-09-10,HIGH,ACTIVE
+AST-000003,Cooling Pump 01,Pump,JPR,LINE-01,Kirloskar,KP-220,KIR-KP220-7731,2022-01-20,MEDIUM,ACTIVE
+AST-000004,Main Drive Motor 01,Motor,JPR,LINE-01,Siemens,1LE7,SIE-1LE7-8832,2021-11-05,HIGH,ACTIVE
+AST-000005,Air Compressor 01,Compressor,JPR,UTILITIES,Atlas Copco,GA-30,ATL-GA30-4412,2019-07-18,HIGH,ACTIVE
+BAD-001,Broken Test Asset,Robot,XYZ,LINE-99,Unknown,TEST-1,TEST-SERIAL-001,2024-01-01,EXTREME,BROKEN
