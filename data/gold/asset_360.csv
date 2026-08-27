@@ -1,0 +1,6 @@
+asset_id,asset_name,asset_type,plant_code,criticality,status,maintenance_events,total_maintenance_cost,total_downtime_minutes,health_score,health_status,failure_events,mttr_minutes,availability_percent
+AST-000001,CNC Turning Center 01,CNC Machine,JPR,HIGH,ACTIVE,1,2500.0,45,95,HEALTHY,0,0,99.9
+AST-000002,Grinding Machine 01,Grinding Machine,JPR,HIGH,ACTIVE,2,22000.0,250,65,MAINTENANCE_RECOMMENDED,1,250.0,99.42
+AST-000003,Cooling Pump 01,Pump,JPR,MEDIUM,ACTIVE,1,1200.0,30,100,HEALTHY,0,0,99.93
+AST-000004,Main Drive Motor 01,Motor,JPR,HIGH,ACTIVE,1,9200.0,360,65,MAINTENANCE_RECOMMENDED,1,360.0,99.17
+AST-000005,Air Compressor 01,Compressor,JPR,HIGH,ACTIVE,1,4800.0,75,100,HEALTHY,0,0,99.83

@@ -1,0 +1,6 @@
+asset_id,maintenance_events,failure_events,total_downtime_minutes,mttr_minutes,availability_percent
+AST-000001,1,0,45,0,99.9
+AST-000002,2,1,250,250.0,99.42
+AST-000003,1,0,30,0,99.93
+AST-000004,1,1,360,360.0,99.17
+AST-000005,1,0,75,0,99.83

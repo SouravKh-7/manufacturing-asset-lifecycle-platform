@@ -1,0 +1,6 @@
+asset_id,asset_name,health_score,failure_events,downtime_minutes,criticality,priority_score,maintenance_priority
+AST-000004,Main Drive Motor 01,65,1,360,HIGH,85,HIGH
+AST-000002,Grinding Machine 01,65,1,250,HIGH,75,HIGH
+AST-000001,CNC Turning Center 01,95,0,45,HIGH,20,LOW
+AST-000005,Air Compressor 01,100,0,75,HIGH,20,LOW
+AST-000003,Cooling Pump 01,100,0,30,MEDIUM,10,LOW
