@@ -1,0 +1,2 @@
+work_order_id,asset_id,maintenance_type,reported_date,completed_date,failure_code,technician,parts_used,maintenance_cost,downtime_minutes,status,error_reason
+WO-000006,AST-999999,EMERGENCY,2026-08-20,2026-08-18,UNKNOWN,TECH-999,Unknown Part,-5000,-60,BROKEN,Asset does not exist in Asset Master; Invalid maintenance_type; Invalid status; maintenance_cost cannot be negative; downtime_minutes cannot be negative; completed_date cannot be before reported_date

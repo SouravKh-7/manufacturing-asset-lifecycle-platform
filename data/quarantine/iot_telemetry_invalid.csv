@@ -1,0 +1,2 @@
+event_timestamp,asset_id,temperature_c,vibration_mm_s,rpm,current_amp,pressure_bar,operating_state,error_reason
+2026-08-27T11:00:00,AST-999999,9999,-5,-3000,-20,-2,FLYING,Unknown asset_id; Invalid operating_state; temperature_c outside valid range; vibration_mm_s outside valid range; rpm cannot be negative; current_amp cannot be negative; pressure_bar cannot be negative

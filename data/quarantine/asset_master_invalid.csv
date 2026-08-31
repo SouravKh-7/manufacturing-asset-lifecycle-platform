@@ -1,0 +1,2 @@
+asset_id,asset_name,asset_type,plant_code,production_line,manufacturer,model,serial_number,installation_date,criticality,status,error_reason
+BAD-001,Broken Test Asset,Robot,XYZ,LINE-99,Unknown,TEST-1,TEST-SERIAL-001,2024-01-01,EXTREME,BROKEN,Invalid asset_id; Invalid plant_code; Invalid asset_type; Invalid criticality; Invalid status
