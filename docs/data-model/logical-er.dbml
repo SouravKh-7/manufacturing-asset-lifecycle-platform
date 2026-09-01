@@ -1,0 +1,102 @@
+// Current file-backed logical model.
+// CSV files are represented as tables so keys and relationships remain explicit.
+
+Table asset {
+  asset_id varchar [pk]
+  asset_name varchar
+  asset_type varchar
+  plant_code varchar
+  production_line varchar
+  manufacturer varchar
+  model varchar
+  serial_number varchar
+  installation_date date
+  criticality varchar
+  status varchar
+}
+
+Table telemetry_reading {
+  asset_id varchar [not null]
+  event_timestamp datetime [not null]
+  temperature_c decimal
+  vibration_mm_s decimal
+  rpm integer
+  current_amp decimal
+  pressure_bar decimal
+  operating_state varchar
+
+  indexes {
+    (asset_id, event_timestamp) [pk]
+  }
+}
+
+Table maintenance_work_order {
+  work_order_id varchar [pk]
+  asset_id varchar [not null]
+  maintenance_type varchar
+  reported_date date
+  completed_date date
+  failure_code varchar
+  technician varchar
+  parts_used varchar
+  maintenance_cost decimal
+  downtime_minutes integer
+  status varchar
+}
+
+Table asset_condition {
+  asset_id varchar [pk]
+  event_timestamp datetime
+  temperature_c decimal
+  vibration_mm_s decimal
+  rpm integer
+  current_amp decimal
+  pressure_bar decimal
+  operating_state varchar
+}
+
+Table asset_health {
+  asset_id varchar [pk]
+  health_score decimal
+  health_status varchar
+  temperature_c decimal
+  vibration_mm_s decimal
+  current_amp decimal
+  operating_state varchar
+}
+
+Table asset_reliability {
+  asset_id varchar [pk]
+  maintenance_events integer
+  failure_events integer
+  total_downtime_minutes integer
+  mttr_minutes decimal
+  availability_percent decimal
+}
+
+Table asset_360 {
+  asset_id varchar [pk]
+  maintenance_events integer
+  total_maintenance_cost decimal
+  total_downtime_minutes integer
+  health_score decimal
+  health_status varchar
+  failure_events integer
+  mttr_minutes decimal
+  availability_percent decimal
+}
+
+Table maintenance_priority {
+  asset_id varchar [pk]
+  priority_score decimal
+  maintenance_priority varchar
+}
+
+Ref: telemetry_reading.asset_id > asset.asset_id
+Ref: maintenance_work_order.asset_id > asset.asset_id
+Ref: asset_condition.asset_id - asset.asset_id
+Ref: asset_health.asset_id - asset.asset_id
+Ref: asset_reliability.asset_id - asset.asset_id
+Ref: asset_360.asset_id - asset.asset_id
+Ref: maintenance_priority.asset_id - asset.asset_id
+

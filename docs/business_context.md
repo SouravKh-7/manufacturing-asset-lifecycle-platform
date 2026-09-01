@@ -32,13 +32,13 @@ Company
 
 Asset information is fragmented across multiple systems such as asset registers, maintenance records, sensor systems, and manual files.
 
-The platform will create a unique digital identity for every asset and combine these datasets into an Asset 360 view.
+The pipeline uses one stable ID for every machine and combines the source data into a single machine summary.
 
 ## Initial Objectives
 
 1. Identify every manufacturing asset uniquely.
 2. Track where each asset is installed.
-3. Track asset lifecycle and maintenance history.
+3. Track machine history and maintenance work.
 4. Capture operating and sensor data.
 5. Measure downtime and reliability.
 6. Calculate asset health.

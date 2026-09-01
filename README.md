@@ -1,72 +1,99 @@
-# Manufacturing Asset Lifecycle Platform
+# Machine Maintenance and Uptime Data Pipeline
 
-This project is a small working example of how a manufacturing company can bring asset information into one place.
+## Status
 
-Factories usually store asset details, sensor readings, and maintenance records in different systems. This makes it difficult to understand the real condition of a machine or decide which machine needs attention first. This project connects those datasets through one permanent `asset_id` and creates a simple Asset 360 view.
+**ACTIVE BUILD** — The local CSV pipeline works; the Databricks version is still planned.
 
-## The idea
+This is an early Python and CSV project. It checks machine, sensor, and maintenance records, keeps bad rows in quarantine, calculates condition and reliability values, and creates a combined machine summary. Databricks, Delta Lake, CDC, streaming, ML, and production deployment are not built yet.
 
-Every physical machine receives a permanent digital identity, such as `AST-000001`. The ID stays the same even if the machine moves to another plant or production line.
+## Problem
 
-The platform uses this identity to connect three types of information:
+Machine details, sensor readings, and maintenance records often sit in separate files or systems. A stable machine ID is needed before condition, failure history, downtime, and maintenance work can be compared correctly.
 
-- Asset master data: what the machine is, where it is installed, and how critical it is.
-- IoT telemetry: temperature, vibration, speed, current, pressure, and operating state.
-- Maintenance history: failures, repair work, cost, and downtime.
+## Current MVP
 
-After checking and combining the data, the platform produces useful information about each asset's condition, health, reliability, and maintenance priority.
+The local pipeline uses Python's standard library and CSV files. It validates three inputs, keeps rejected records with reasons, calculates condition and reliability values, builds a combined machine file, and ranks machines for maintenance review. The sample has five valid machines and a few bad rows included to test quarantine.
 
-## How it works
+## Architecture
 
-```text
-Raw asset, telemetry, and maintenance data
-                    |
-                    v
-        Validate and clean the records
-              /             \
-             v               v
-      Valid records     Invalid records
-      data/processed    data/quarantine
-             |
-             v
-  Condition, health, and reliability calculations
-             |
-             v
-          Asset 360
-             |
-             v
-      Maintenance priority
+**State:** Implemented local MVP
+
+```mermaid
+flowchart TD
+    A[Raw CSV sources]
+    B[Python validation]
+    C[Processed data]
+    D[Quarantine]
+    E[Condition, health and reliability]
+    F[Combined machine summary]
+    G[Maintenance priority]
+
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    E --> F
+    F --> G
 ```
 
-Invalid records are not silently deleted. They are moved to the quarantine folder so that someone can review and correct them. The sample raw data intentionally contains a few invalid records to demonstrate this behavior.
+This diagram shows the local code that works now. The Databricks version is not built yet.
 
-## What the project creates
+Maintainable diagram sources:
 
-- **Asset condition:** the latest telemetry reading for each asset.
-- **Health score:** a score from 0 to 100 based on temperature, vibration, current, and operating state.
-- **Reliability measures:** failure count, downtime, mean time to repair, and availability.
-- **Asset 360:** one combined record containing the most important information about an asset.
-- **Maintenance priority:** a ranked list showing which assets should receive attention first.
+- [System overview](docs/architecture/system-overview.md)
+- [Current Python MVP](docs/architecture/current-mvp.md)
+- [Validation and quarantine flow](docs/architecture/validation-flow.md)
+- [Conceptual ER model](docs/data-model/conceptual-er.md)
+- [Logical ER model](docs/data-model/logical-er.dbml)
+- [Future Databricks lakehouse](docs/architecture/future-lakehouse.md)
 
-The current sample contains five valid manufacturing assets. It is an early MVP designed to demonstrate the data model and processing logic before adding databases, dashboards, live IoT feeds, or machine-learning models.
+## Machine ID
 
-## Project structure
+Every machine receives a permanent `AST-<SEQUENCE>` value in the existing `asset_id` field. Plant, machine type, production line, location, and status stay as separate attributes. The rules are in [`docs/asset_identity.md`](docs/asset_identity.md).
 
-```text
-data/
-  raw/          Original input data
-  processed/    Valid and cleaned records
-  quarantine/   Invalid records that need review
-  gold/         Final business-ready datasets
-docs/           Business context and asset identity rules
-src/            Python validation and processing scripts
-```
+## Data Sources
 
-## Run the project
+- Machine master: ID, type, plant, line, manufacturer, installation date, criticality, and status.
+- IoT telemetry: timestamped temperature, vibration, speed, current, pressure, and operating state.
+- Maintenance work orders: maintenance type, dates, failure code, technician, parts, cost, downtime, and status.
+
+All included data is synthetic and public-safe.
+
+## Data Quality & Quarantine
+
+The validation scripts check identifiers, referenced assets, allowed codes and statuses, dates, numeric values, and source-specific rules. Invalid rows are written to `data/quarantine/` with an `error_reason`; they are not silently deleted.
+
+## Machine Condition
+
+`src/build_asset_condition.py` selects the latest valid telemetry reading for each machine. `src/calculate_health_score.py` uses simple rules to create a 0–100 health score and status. This is a batch result from the latest reading, not live monitoring or prediction.
+
+## Reliability Metrics
+
+`src/calculate_reliability.py` derives maintenance events, failure events, total downtime, MTTR, and availability. Availability uses a fixed 30-day sample window for the MVP, so it is not a production SLA measure.
+
+## Combined Machine Summary
+
+`src/build_asset_360.py` joins the machine master, maintenance totals, health, and reliability results into `data/gold/asset_360.csv`. The filename stays unchanged because it is used by the working code. It is a local output file, not a live service.
+
+## Maintenance Priority
+
+`src/calculate_maintenance_priority.py` produces a rule-based ranking. It supports inspection of the MVP logic; it is not an automated maintenance decision or validated predictive model.
+
+## Files and Outputs
+
+- Python validation, processing, metric, and Gold-building scripts.
+- Source, validated, quarantined, and Gold CSV datasets.
+- Invalid sample rows with recorded rejection reasons.
+- Gold outputs for condition, health, reliability, the combined machine summary, and maintenance priority.
+- Business-context and machine-ID documentation.
+
+There is no automated test suite yet. Current verification consists of executing the documented workflow and inspecting the generated outputs.
+
+## Local Execution
 
 The project uses only Python's standard library, so no extra packages are required. Python 3.9 or newer is recommended.
 
-Run these commands from the project root in the order shown:
+Execution sequence from the project root:
 
 ```bash
 python src/validate_asset_master.py
@@ -81,19 +108,51 @@ python src/build_asset_360.py
 python src/calculate_maintenance_priority.py
 ```
 
-The final results will be available in `data/gold/`. Start with:
+The final results are written to `data/gold/`. Primary outputs:
 
-- `asset_360.csv` for the combined view of every asset.
+- `asset_360.csv` for the combined view of every machine.
 - `maintenance_priority.csv` for the ranked maintenance list.
 
-## Future direction
+## Repository Structure
 
-This MVP can grow into a larger manufacturing platform with:
+```text
+data/
+  raw/          Synthetic source inputs
+  processed/    Validated records
+  quarantine/   Rejected records and reasons
+  gold/         Current analytical outputs
+docs/           Business context and machine ID rules
+src/            Validation, processing, metric, and Gold-building scripts
+```
 
-- A database and automated data pipelines.
-- Live IoT data ingestion.
-- Dashboards and alerts.
-- Maintenance planning and work-order integration.
-- Failure prediction and remaining useful life estimation.
+## Current Limitations
 
-The long-term goal is simple: give maintenance and operations teams one trusted view of every asset, so they can reduce downtime, plan maintenance better, and make informed decisions.
+- File-based, single-machine batch execution over a small synthetic dataset.
+- No live plant or employer data.
+- No orchestrator, database, catalog, API, authentication, dashboard, production monitoring, or lineage service.
+- No automated tests, CDC, SCD Type 2 history, late-data policy, backfill framework, or formal idempotency contract.
+- Health and priority calculations are rules, not validated predictive models.
+
+## Databricks Lakehouse Roadmap
+
+The next engineering phase is to design and implement Bronze, Silver, and Gold Delta tables; PySpark transformations; orchestration; schema enforcement; data-quality evidence; and reproducible deployment assets. These remain planned until code and verification evidence are added.
+
+## CDC / SCD Type 2 Roadmap
+
+Planned work includes source change contracts, incremental checkpoints, idempotent Delta `MERGE`, late-arriving changes, history-preserving asset attributes, effective dates, current-row flags, replay, and backfill tests. None of this is implemented in the current MVP.
+
+## Testing & Observability Roadmap
+
+Planned work includes unit and integration tests, data-contract tests, reconciliation, freshness and volume monitoring, run metadata, structured logs, failure scenarios, and CI. Test counts or coverage are not claimed yet.
+
+## ML / Agentic AI Future Direction
+
+Later experiments may test failure-risk or remaining-life models after better history and a clear baseline exist. A future assistant could search machine history, but it must not invent records, declare the final root cause, or change production or maintenance systems.
+
+## Case Study
+
+[Portfolio case study](https://souravkh-7.github.io/git_portfolio/projects/manufacturing-asset-lifecycle.html)
+
+## Blog
+
+No dedicated project blog post is published yet.
