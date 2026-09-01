@@ -149,6 +149,16 @@ Planned work includes unit and integration tests, data-contract tests, reconcili
 
 Later experiments may test failure-risk or remaining-life models after better history and a clear baseline exist. A future assistant could search machine history, but it must not invent records, declare the final root cause, or change production or maintenance systems.
 
+## Open-source and Research References
+
+These links are design and learning references. They do not mean the current CSV MVP uses or implements each source.
+
+- [NASA Prognostics Center of Excellence data repository](https://www.nasa.gov/content/prognostics-center-of-excellence-data-set-repository) — public degradation and prognostics datasets for later failure-model experiments.
+- [UCI AI4I 2020 Predictive Maintenance Dataset](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset) — a small public dataset for checking feature and label ideas.
+- [OPC UA overview](https://opcfoundation.org/about/opc-technologies/opc-ua/) — an industrial interoperability reference for future machine-data ingestion.
+- [Apache Spark documentation](https://spark.apache.org/docs/latest/) — reference for the planned distributed-processing phase.
+- [Delta Lake documentation](https://docs.delta.io/latest/index.html) — reference for future table history, merge, and lakehouse work.
+
 ## Case Study
 
 [Portfolio case study](https://souravkh-7.github.io/git_portfolio/projects/manufacturing-asset-lifecycle.html)
